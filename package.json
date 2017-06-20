@@ -13,7 +13,6 @@
     "express": "^4.14.0",
     "node-static": "^0.7.8",
     "jquery": "^3.2.1",
-    "uuid": "^3.0.1",
-    "bootstrap": "^3.3.7"
+    "uuid": "^3.0.1"
   }
 }

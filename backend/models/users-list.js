@@ -43,7 +43,7 @@ class UsersList {
 		const oldUser = this.get(newUser.id);
 
 		if (oldUser) {
-			this.remove(oldUser);
+			this.remove(oldUser.id);
 			return this.__prepend(newUser);
 		} else {
 			throw new Error("You cannot update. Specified user does not exists or have different id.");

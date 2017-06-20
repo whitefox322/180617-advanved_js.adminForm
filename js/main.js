@@ -10,7 +10,6 @@ $($sideForm).click(function (e) {
 
     var $element = $(e.target);
 
-
     if ($element[0].className === "side__pagination") {
         var $pag = $(".side__pagination");
         $pag.parent().removeClass("active");
@@ -20,23 +19,38 @@ $($sideForm).click(function (e) {
         getUsers($element[0].text);
     }
 
-    else if ($element.parent(".list-group-item")) {
-        var $remove = $element.parent(".list-group-item");
+    else if ($element.parents().hasClass("list-group-item")) {
+        for (var i = 0; i < $element.parents().length; i++) {
+            if ($element.parents()[i].className === "list-group-item") {
+                getUser($element.parents()[i].id);
+            }
+        }
+    }
 
-        console.log($remove[0].id);
-        deleteUser($remove[0].id);
+    else if ($element[0].id === "remove") {
+        var $remove = $("#id");
+        deleteUser($remove[0].value);
 
         clearUsers();
         getUsers("1");
         clearPagination();
         getPagination();
+        fillForm({});
     }
 });
 
 $($mainForm).submit(function (e) {
     e.preventDefault();
 
-    postUser();
+    var id = $("#id");
+
+    if (id.val() === "") {
+        postUser();
+    }
+
+    else {
+        putUser(id.val());
+    }
 });
 
 $($mainForm).click(function (e) {
@@ -84,6 +98,12 @@ function getUsers(page) {
     });
 }
 
+function getUser(id) {
+    $.getJSON("/api/users/" + id, function (object) {
+        fillForm(object);
+    });
+}
+
 function postUser() {
     var $user = {
         id: $("#id").val(),
@@ -100,6 +120,36 @@ function postUser() {
     var $options = {
         url: "/api/users",
         type: "post",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify($user)
+    };
+
+    $.ajax($options).done(function () {
+        clearUsers();
+        clearPagination();
+        getPagination();
+        getUsers("1");
+        fillForm({});
+    });
+}
+
+function putUser(id) {
+    var $user = {
+        id: $("#id").val(),
+        fullName: $("#fullname").val(),
+        birthday: $("#birthday").val(),
+        profession: $("#profession").val(),
+        email: $("#email").val(),
+        address: $("#address").val(),
+        country: $("#country").val(),
+        shortInfo: $("#short-info").val(),
+        fullInfo: $("#full-info").val()
+    };
+
+    var $options = {
+        url: "/api/users",
+        type: "put",
         contentType: "application/json",
         dataType: "json",
         data: JSON.stringify($user)
